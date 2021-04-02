@@ -1,17 +1,19 @@
 # Assignment
 <p> In this assignment user can perform crud operations and see logs</p>
-<h1>Prerequisites:</h1>
+## Prerequisites:
 You will need the following programmes properly installed on your computer.
-     Python 3.5+
-     Virtual Environment
+     `1.Python 3.5+
+      2.Virtual Environment`
 To install virtual environment on your system use:
 
-pip install virtualenv
+`pip install virtualenv
 
 or
 
-pip3 install virtualenv #if using linux(for python 3 and above)
-<h1>Installation and Running :</h1>
+pip3 install virtualenv #if using linux(for python 3 and above)`
+
+##Installation and Running :
+`
 git clone https://github.com/ongraphpythondev/Assignment.git
 cd Assignment
 cd CRUDApplicatn
@@ -28,5 +30,6 @@ source venv/bin/activate # for linux
 pip install -r requirements.txt
 python manage.py migrate
 python manage.py runserver
+`
 
 
