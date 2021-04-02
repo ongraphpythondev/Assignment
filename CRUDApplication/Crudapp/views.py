@@ -66,18 +66,19 @@ class Crud(generics.GenericAPIView):
     def put(self, request, *args):
         try:
             id = request.data['id']
+            snippet = self.get_object(id)
             qs=User.objects.get(id=id)
-            serializer = UserSerializer1(data=request.data)
+            serializer = UserSerializer1(snippet,data=request.data)
             try:
-                serializer.is_valid(raise_exception=True)
-                serializer.update(qs, request.data)
-                return Response(
-                    data={
-                        "data": UserSerializer1(User.objects.get(id=id)).data,
-                        "message": "User update successfully.",
-                        "success": True,
-                    }, status=status.HTTP_200_OK
-                )
+                if serializer.is_valid():
+                    serializer.save()
+                    return Response(
+                        data={
+                            "data": UserSerializer1(User.objects.get(id=id)).data,
+                            "message": "User update successfully.",
+                            "success": True,
+                        }, status=status.HTTP_200_OK
+                    )
             except:
                 return Response(
                     data={
@@ -145,6 +146,10 @@ class UserUpdate(generics.GenericAPIView):
                     "success": False
                 }, status=status.HTTP_403_FORBIDDEN
             )
+
+class UserDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer1
 
 def logs(request):
     q_list = [Q(method='PUT'), Q(method='POST'),Q(method='DELETE'),Q(method='GET')]

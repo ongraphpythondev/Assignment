@@ -285,16 +285,16 @@
                                         }
                                     }
                                    });
-                        var url = $("#demo").attr("data-cities-url");
+                        var url = '/edit/';
                        $.ajax({
-                                url: url,
+                                url: `${url}${id}/`,
                                 "type": e.id,
                                 "beforeSend": function(xhr, settings) {
                                     $.ajaxSettings.beforeSend(xhr, settings);
                                  },
                                  "data":{'method':e.id,'id':id,'username':uname,'first_name':fname,'last_name':lname,'email':email},
                                  success: function (data) {
-                                document.getElementById("demo2").innerHTML=JSON.stringify(data.data);
+                                document.getElementById("demo2").innerHTML=JSON.stringify(data);
                                 var tr = document.getElementById(`user-${data.data.id}`)
                                 tr.children[0].innerHTML = `<a href="#">${data.data.username}</a>`
                                 tr.children[1].innerText = data.data.first_name
@@ -302,7 +302,7 @@
                                 tr.children[3].innerText = data.data.email
                                  },
                                  error: function (data) {
-                                document.getElementById("demo2").innerHTML=JSON.stringify(data.responseJSON.message);
+                                document.getElementById("demo2").innerHTML=JSON.stringify(data.responseJSON.detail);
                                  },
 
 
