@@ -47,7 +47,7 @@
                   </thead>
                   <tbody>
                   {% for i in user %}
-                     <tr>
+                     <tr id="user-{{ i.id }}">
                         <td class="tb_chk_box">
 
                            <a href="#">{{i.username}}</a>
@@ -300,6 +300,11 @@
                                  "data":{'id':id,'username':uname,'first_name':fname,'last_name':lname,'email':email},
                                  success: function (data) {
                                 document.getElementById("demo2").innerHTML=JSON.stringify(data.data);
+                                var tr = document.getElementById(`user-${data.data.id}`)
+                                tr.children[0].innerHTML = `<a href="#">${data.data.username}</a>`
+                                tr.children[1].innerText = data.data.first_name
+                                tr.children[2].innerText = data.data.last_name
+                                tr.children[3].innerText = data.data.email
                                  },
                                  error: function (data) {
                                  console.log(data.responseJSON.message,'aa');
