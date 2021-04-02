@@ -9,7 +9,11 @@ from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from .models import *
-import sys
+from django.db.models import Q
+from functools import reduce
+import operator
+
+from drf_api_logger.models import APILogsModel
 
 def index(request):
     if request.method == 'GET':
@@ -20,8 +24,6 @@ def index(request):
 class Crud(generics.GenericAPIView):
     serializer_class = UserSerializer
     def get(self, request, *args, **kwargs):
-        original_stdout = sys.stdout
-        print(request.data, original_stdout, '+++++++++++')
         id=request.GET.get('id')
         if id:
             try:
@@ -44,10 +46,8 @@ class Crud(generics.GenericAPIView):
                 }, status=status.HTTP_403_FORBIDDEN
             )
     def post(self, request, *args):
-        print(request.data)
         user_serializer = self.serializer_class(data=request.data)
         if user_serializer.is_valid():
-            print(request.data)
             user_serializer.save()
             return Response(
                 data={
@@ -64,7 +64,6 @@ class Crud(generics.GenericAPIView):
         )
 
     def put(self, request, *args):
-        print(request.data)
         try:
             id = request.data['id']
             qs=User.objects.get(id=id)
@@ -72,7 +71,6 @@ class Crud(generics.GenericAPIView):
             try:
                 serializer.is_valid(raise_exception=True)
                 serializer.update(qs, request.data)
-                print(serializer.data,'\\')
                 return Response(
                     data={
                         "data": UserSerializer1(User.objects.get(id=id)).data,
@@ -83,12 +81,11 @@ class Crud(generics.GenericAPIView):
             except:
                 return Response(
                     data={
-                        "message": "Something Went Wrong.",
+                        "message": "You didn't update any value.",
                         "success": False,
                     }, status=status.HTTP_404_NOT_FOUND
                 )
         except Exception as e:
-            print(e)
             return Response(
                 data={
                     "message": "Please pass a valid id",
@@ -99,7 +96,6 @@ class Crud(generics.GenericAPIView):
 
             id = request.data['id']
             if id:
-                print('ldl', request.GET.get('id'), request.data['id'])
                 try:
                     user = User.objects.get(id=id)
                     user.delete()
@@ -108,7 +104,6 @@ class Crud(generics.GenericAPIView):
                          "message": "User deleted successfully",
                     })
                 except:
-                    print('lfl', request.GET.get('id'), request.data['id'])
                     return Response(
                         data={
                             "message": "Please pass a valid id",
@@ -116,7 +111,6 @@ class Crud(generics.GenericAPIView):
                         }, status=status.HTTP_403_FORBIDDEN
                     )
             else:
-                print('lgl', request.GET.get('id'), request.data['id'])
                 return Response(
                     data={
                         "message": "Please pass id",
@@ -153,6 +147,7 @@ class UserUpdate(generics.GenericAPIView):
             )
 
 def logs(request):
-    log = Log.objects.all()
+    q_list = [Q(method='PUT'), Q(method='POST'),Q(method='DELETE'),Q(method='GET')]
+    result = APILogsModel.objects.filter(reduce(operator.or_, q_list),~Q(api='http://127.0.0.1:8000/'),~Q(api='http://127.0.0.1:8000/log/'))
     return render(request, 'Crudapp/log.html',
-                  {'log': log})
+                  {'log': result})

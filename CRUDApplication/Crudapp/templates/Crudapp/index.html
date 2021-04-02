@@ -192,13 +192,11 @@
                                 "beforeSend": function(xhr, settings) {
                                     $.ajaxSettings.beforeSend(xhr, settings);
                                  },
-                                 "data":{'id':id},
+                                 "data":{'id':id,'method':e.id},
                                  success: function (data) {
-                                 console.log(data.data);
                                 document.getElementById("demo2").innerHTML=JSON.stringify(data.data);
                                  },
                                  error: function (data) {
-                                 console.log(data.data);
                                 document.getElementById("demo2").innerHTML=data.responseJSON.message;
                                  },
 
@@ -224,13 +222,11 @@
                                 "beforeSend": function(xhr, settings) {
                                     $.ajaxSettings.beforeSend(xhr, settings);
                                  },
-                                 "data":{'id':id},
+                                 "data":{'id':id,'method':e.id},
                                  success: function (data) {
-                                 console.log(data.data);
-                                document.getElementById("demo2").innerHTML=data.responseJSON.message;
+                                document.getElementById("demo2").innerHTML=data.message;
                                  },
                                  error: function (data) {
-                                 console.log(data.responseJSON.message);
                                 document.getElementById("demo2").innerHTML=data.responseJSON.message;
                                  },
 
@@ -262,12 +258,11 @@
                                 "beforeSend": function(xhr, settings) {
                                     $.ajaxSettings.beforeSend(xhr, settings);
                                  },
-                                 "data":{'username':uname,'first_name':fname,'last_name':lname,'email':email,'password1':password11,'password2':password22},
+                                 "data":{'method':e.id,'username':uname,'first_name':fname,'last_name':lname,'email':email,'password1':password11,'password2':password22},
                                  success: function (data) {
                                 document.getElementById("demo2").innerHTML=JSON.stringify(data.data);
                                  },
                                  error: function (data) {
-                                 console.log(data,'aa');
                                 document.getElementById("demo2").innerHTML=JSON.stringify(data.responseJSON.error);
                                  },
 
@@ -297,7 +292,7 @@
                                 "beforeSend": function(xhr, settings) {
                                     $.ajaxSettings.beforeSend(xhr, settings);
                                  },
-                                 "data":{'id':id,'username':uname,'first_name':fname,'last_name':lname,'email':email},
+                                 "data":{'method':e.id,'id':id,'username':uname,'first_name':fname,'last_name':lname,'email':email},
                                  success: function (data) {
                                 document.getElementById("demo2").innerHTML=JSON.stringify(data.data);
                                 var tr = document.getElementById(`user-${data.data.id}`)
@@ -307,7 +302,6 @@
                                 tr.children[3].innerText = data.data.email
                                  },
                                  error: function (data) {
-                                 console.log(data.responseJSON.message,'aa');
                                 document.getElementById("demo2").innerHTML=JSON.stringify(data.responseJSON.message);
                                  },
 
@@ -335,7 +329,6 @@
                                  },
                                  "data":{'id':id},
                                  success: function (data) {
-                                 console.log(data.data)
                                 document.getElementById("uname1").value = data.data['username'];
                                 document.getElementById("fname1").value = data.data['first_name'];
                                 document.getElementById("lname1").value = data.data['last_name'];
@@ -346,7 +339,6 @@
                                 document.getElementById("fname1").value = '';
                                 document.getElementById("lname1").value = '';
                                 document.getElementById("email1").value = '';
-                                 console.log(data,'aa');
                                 document.getElementById("demo2").innerHTML=JSON.stringify(data.responseJSON.message);
                                  },
 

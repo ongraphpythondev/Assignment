@@ -34,11 +34,14 @@
                <table id="example" class="table " style="width:100%">
                   <thead>
                      <tr>
-                        <th class="tb_chk_box">
+                        <th>
 
                            Logs
                         </th>
-                        <th>created_at</th>
+                         <th>API</th>
+                        <th>Response</th>
+                         <th>Status code</th>
+                         <th>Added on</th>
                      </tr>
                   </thead>
                   <tbody>
@@ -46,9 +49,12 @@
                      <tr>
                         <td class="tb_chk_box">
 
-                           <a href="#">{{i.log}}</a>
+                           <a href="#">{{i.method}}</a>
                         </td>
-                        <td> {{i.created_at}}</td>
+                         <td>{{i.api}}</td>
+                        <td> {{i.response}}</td>
+                         <td>{{i.status_code}}</td>
+                         <td>{{i.added_on}}</td>
 
                      </tr>
                    {% endfor %}

@@ -38,8 +38,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
     'Crudapp',
+
     'rest_framework',
+    'drf_api_logger'
 ]
 
 MIDDLEWARE = [
@@ -50,7 +53,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'drf_api_logger.middleware.api_logger_middleware.APILoggerMiddleware'
 ]
+DRF_API_LOGGER_DATABASE = True
 
 ROOT_URLCONF = 'CRUDApplication.urls'
 
