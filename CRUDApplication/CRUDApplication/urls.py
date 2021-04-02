@@ -16,13 +16,11 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path,include
 from django.views.generic import TemplateView
-from Crudapp.views import CreateCrudUser, DeleteCrudUser, UpdateCrudUser
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    # path('crud/list', CrudView.as_view(), name='crud_list'),
-    path('crud/create/', CreateCrudUser.as_view(), name='crud_create'),
-    path('crud/delete/', DeleteCrudUser.as_view(), name='crud_delete'),
-    path('crud/update/', UpdateCrudUser.as_view(), name='crud_update'),
+    path('', include('Crudapp.urls')),
 
-]
+] + static(settings.STATIC_URL, document_root=settings.MEDIA_ROOT)

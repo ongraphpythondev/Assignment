@@ -4,63 +4,155 @@ from django.contrib.auth.models import User
 from django.views.generic import TemplateView, View, DeleteView
 from django.core import serializers
 from django.http import JsonResponse
+from .serializers import UserSerializer,UserSerializer1
+from rest_framework import generics, status
+from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
+from .models import *
+import sys
 
+def index(request):
+    if request.method == 'GET':
+        user=User.objects.all()
+        return render(request, 'Crudapp/index.html',
+                      {'user':user})
 
-class CreateCrudUser(View):
-    def  get(self, request):
-        username = request.GET.get('username', None)
-        first_name = request.GET.get('first_name', None)
-        last_name = request.GET.get('last_name', None)
-        email = request.GET.get('email', None)
-
-        obj = User.objects.create(
-            username = username,
-            first_name = first_name,
-            last_name = last_name,
-            email = email,
-
+class Crud(generics.GenericAPIView):
+    serializer_class = UserSerializer
+    def get(self, request, *args, **kwargs):
+        original_stdout = sys.stdout
+        print(request.data, original_stdout, '+++++++++++')
+        id=request.GET.get('id')
+        if id:
+            try:
+                user=User.objects.get(id=id)
+                return Response({
+                    "data": self.serializer_class(user).data,
+                })
+            except:
+                return Response(
+                    data={
+                        "message": "Please pass a valid id",
+                        "success": False
+                    }, status=status.HTTP_403_FORBIDDEN
+                )
+        else:
+            return Response(
+                data={
+                    "message": "Please pass id",
+                    "success": False
+                }, status=status.HTTP_403_FORBIDDEN
+            )
+    def post(self, request, *args):
+        print(request.data)
+        user_serializer = self.serializer_class(data=request.data)
+        if user_serializer.is_valid():
+            print(request.data)
+            user_serializer.save()
+            return Response(
+                data={
+                    "data": user_serializer.data,
+                    "message": "User saved successfully.",
+                    "success": True,
+                }, status=status.HTTP_201_CREATED
+            )
+        return Response(
+            data={
+                "error":user_serializer.errors,
+                "success": False,
+            }, status=status.HTTP_404_NOT_FOUND
         )
 
-        user = {'id':obj.id,'username':obj.username,'first_name':obj.first_name,'last_name':last_name}
+    def put(self, request, *args):
+        print(request.data)
+        try:
+            id = request.data['id']
+            qs=User.objects.get(id=id)
+            serializer = UserSerializer1(data=request.data)
+            try:
+                serializer.is_valid(raise_exception=True)
+                serializer.update(qs, request.data)
+                print(serializer.data,'\\')
+                return Response(
+                    data={
+                        "data": UserSerializer1(User.objects.get(id=id)).data,
+                        "message": "User update successfully.",
+                        "success": True,
+                    }, status=status.HTTP_200_OK
+                )
+            except:
+                return Response(
+                    data={
+                        "message": "Something Went Wrong.",
+                        "success": False,
+                    }, status=status.HTTP_404_NOT_FOUND
+                )
+        except Exception as e:
+            print(e)
+            return Response(
+                data={
+                    "message": "Please pass a valid id",
+                    "success": False
+                }, status=status.HTTP_403_FORBIDDEN
+            )
+    def delete(self, request, *args):
 
-        data = {
-            'user': user
-        }
-        return JsonResponse(data)
+            id = request.data['id']
+            if id:
+                print('ldl', request.GET.get('id'), request.data['id'])
+                try:
+                    user = User.objects.get(id=id)
+                    user.delete()
+                    return Response(
+                        data={
+                         "message": "User deleted successfully",
+                    })
+                except:
+                    print('lfl', request.GET.get('id'), request.data['id'])
+                    return Response(
+                        data={
+                            "message": "Please pass a valid id",
+                            "success": False
+                        }, status=status.HTTP_403_FORBIDDEN
+                    )
+            else:
+                print('lgl', request.GET.get('id'), request.data['id'])
+                return Response(
+                    data={
+                        "message": "Please pass id",
+                        "success": False
+                    }, status=status.HTTP_403_FORBIDDEN
+                )
 
-class DeleteCrudUser(View):
-    def  get(self, request):
-        id1 = request.GET.get('id', None)
-        CrudUser.objects.get(id=id1).delete()
-        data = {
-            'deleted': True
-        }
-        return JsonResponse(data)
+class UserUpdate(generics.GenericAPIView):
+    serializer_class = UserSerializer
 
-
-class UpdateCrudUser(View):
-    def  get(self, request):
-        id1 = request.GET.get('id', None)
-        username = request.GET.get('username', None)
-        first_name = request.GET.get('first_name', None)
-        last_name = request.GET.get('last_name', None)
-        email = request.GET.get('email', None)
-
-        obj = User.objects.get(id=id1)
-        obj.username = username
-        obj.first_name = first_name
-        obj.last_name = last_name
-        obj.email=email
-        obj.save()
-
-        user = {'id':obj.id,'username':obj.username,'first_name':obj.first_name,'last_name':obj.last_name,'email':obj.email}
-
-        data = {
-            'user': user
-        }
-        return JsonResponse(data)
+    def get(self, request, *args, **kwargs):
 
 
+        id = request.GET.get('id')
+        if id:
+            try:
+                user = User.objects.get(id=id)
+                return Response({
+                    "data": self.serializer_class(user).data,
+                })
+            except:
+                return Response(
+                    data={
+                        "message": "Please pass a valid id",
+                        "success": False
+                    }, status=status.HTTP_403_FORBIDDEN
+                )
+        else:
+            return Response(
+                data={
+                    "message": "Please pass id",
+                    "success": False
+                }, status=status.HTTP_403_FORBIDDEN
+            )
 
-
-
+def logs(request):
+    log = Log.objects.all()
+    return render(request, 'Crudapp/log.html',
+                  {'log': log})
