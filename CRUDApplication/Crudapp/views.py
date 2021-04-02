@@ -4,63 +4,43 @@ from django.contrib.auth.models import User
 from django.views.generic import TemplateView, View, DeleteView
 from django.core import serializers
 from django.http import JsonResponse
+from rest_framework import viewsets
+from .serializers import UserSerializer
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework import generics
+from django.forms.models import model_to_dict
 
+class GetUserApi(generics.RetrieveUpdateDestroyAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer()
+    # lookup_field = 'pk'
+    def get(self,request,id):
+        # import pdb;pdb.set_trace()
+        try:
+            try:
+                # u = User.objects.get(id=id).values_list('username')
+                u=User.objects.values('username','first_name','last_name','email').get(pk=id)
+                # data=model_to_dict(u)
+                return JsonResponse({'success': True,'data':u})
+            except:
+                return JsonResponse({'success': False, 'message': 'User Does not exist'},status=status.HTTP_400_BAD_REQUEST)
+        except:
+            pass
 
-class CreateCrudUser(View):
-    def  get(self, request):
-        username = request.GET.get('username', None)
-        first_name = request.GET.get('first_name', None)
-        last_name = request.GET.get('last_name', None)
-        email = request.GET.get('email', None)
+class UserCreateApi(generics.CreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
 
-        obj = User.objects.create(
-            username = username,
-            first_name = first_name,
-            last_name = last_name,
-            email = email,
+class UserApi(generics.ListAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
 
-        )
+class UserUpdateApi(generics.RetrieveUpdateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
 
-        user = {'id':obj.id,'username':obj.username,'first_name':obj.first_name,'last_name':last_name}
-
-        data = {
-            'user': user
-        }
-        return JsonResponse(data)
-
-class DeleteCrudUser(View):
-    def  get(self, request):
-        id1 = request.GET.get('id', None)
-        CrudUser.objects.get(id=id1).delete()
-        data = {
-            'deleted': True
-        }
-        return JsonResponse(data)
-
-
-class UpdateCrudUser(View):
-    def  get(self, request):
-        id1 = request.GET.get('id', None)
-        username = request.GET.get('username', None)
-        first_name = request.GET.get('first_name', None)
-        last_name = request.GET.get('last_name', None)
-        email = request.GET.get('email', None)
-
-        obj = User.objects.get(id=id1)
-        obj.username = username
-        obj.first_name = first_name
-        obj.last_name = last_name
-        obj.email=email
-        obj.save()
-
-        user = {'id':obj.id,'username':obj.username,'first_name':obj.first_name,'last_name':obj.last_name,'email':obj.email}
-
-        data = {
-            'user': user
-        }
-        return JsonResponse(data)
-
-
-
-
+class UserDeleteApi(generics.DestroyAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
 
