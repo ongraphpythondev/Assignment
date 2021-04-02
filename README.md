@@ -12,7 +12,7 @@ or
 
 pip3 install virtualenv #if using linux(for python 3 and above)`
 
-##Installation and Running :
+## Installation and Running :
 `
 git clone https://github.com/ongraphpythondev/Assignment.git
 cd Assignment
@@ -23,13 +23,13 @@ virtualenv venv -p python3 #if using linux(for python 3 and above)
 
 venv\Scripts\activate # for windows
       or
-source venv/bin/activate # for linux
+source venv/bin/activate # for linux `
 
-# install required packages for the project to run
+####### install required packages for the project to run
 
 pip install -r requirements.txt
 python manage.py migrate
 python manage.py runserver
-`
+
 
 
